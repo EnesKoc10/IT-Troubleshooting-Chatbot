@@ -176,8 +176,6 @@ docker-compose logs -f frontend
 docker-compose logs -f vectordatabase
 ```
 
-## 🛠️ Troubleshooting
-
 ### Common Issues
 
 1. **Backend not starting**: Check OpenAI API key in `.env`

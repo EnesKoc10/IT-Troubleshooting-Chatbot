@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # 🛠️ IT Support Agent
 
 A comprehensive IT support system with RAG-powered knowledge base, modern streaming chatbot interface, and intelligent issue categorization.
@@ -17,6 +16,7 @@ The system consists of three main components:
 
 - Docker and Docker Compose
 - OpenAI API key
+- Gemini API key
 
 ### Installation
 
@@ -27,9 +27,10 @@ The system consists of three main components:
    ```
 
 2. **Configure environment:**
-   Edit `.env` file and add your OpenAI API key:
+   Edit `.env` file and add your OpenAI API key and your Gemini API key:
    ```bash
    OPENAI_API_KEY=your_actual_openai_api_key_here
+   GEMINI_API_KEY=your_actual_gemini_api_key_here
    ```
 
 3. **Start the system:**
@@ -72,6 +73,7 @@ The system consists of three main components:
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `OPENAI_API_KEY` | OpenAI API key | Required |
+| `GEMINI_API_KEY` | Gemini API key | Required |
 | `QDRANT_URL` | Qdrant server URL | http://localhost:6333 |
 | `QDRANT_PORT` | Qdrant server port | 6333 |
 | `QDRANT_COLLECTION` | Vector collection name | it_support_kb |
@@ -82,7 +84,6 @@ The system consists of three main components:
 
 #### Backend API (`http://localhost:8000`)
 
-- `POST /chat` - Send message to IT support agent
 - `POST /chat/stream` - Streaming chat endpoint
 - `GET /health` - Health check
 - `GET /tickets/{thread_id}` - Get ticket information
@@ -176,13 +177,6 @@ docker-compose logs -f frontend
 docker-compose logs -f vectordatabase
 ```
 
-### Common Issues
-
-1. **Backend not starting**: Check OpenAI API key in `.env`
-2. **Frontend can't connect**: Ensure backend is running on port 8000
-3. **Vector DB empty**: Check Qdrant is running and vectordatabase service completed
-4. **Slow responses**: Check system resources and network connectivity
-
 ### Debug Mode
 
 ```bash
@@ -208,28 +202,3 @@ docker-compose -f docker-compose.prod.yml up
 # Development
 docker-compose -f docker-compose.dev.yml up
 ```
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create feature branch
-3. Add tests for new features
-4. Submit pull request
-
-## 📄 License
-
-MIT License - see LICENSE file for details
-
-## 🆘 Support
-
-For issues and questions:
-- Check the troubleshooting section
-- Review Docker logs
-- Open an issue on GitHub
-
----
-
-**Built with ❤️ for IT Support Teams**
-=======
-# IT-Troubleshooting-Chatbot
->>>>>>> f8f0c55fc45e02d5cd90064a92106a526d1bd1c8

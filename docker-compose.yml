@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    environment:
+      - QDRANT__SERVICE__HTTP_PORT=6333
+      - QDRANT__SERVICE__GRPC_PORT=6334
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  vectordatabase:
+    build: ./vectordatabase
+    depends_on:
+      - qdrant
+    volumes:
+      - ./vectordatabase:/app
+    environment:
+      - QDRANT_URL=http://qdrant:6333
+      - QDRANT_PORT=6333
+      - QDRANT_COLLECTION=it_support_kb
+    command: >
+      sh -c "
+        echo 'Waiting for Qdrant to be ready...' &&
+        sleep 10 &&
+        python buildRAG.py build --pdf-dir /app --pattern '*.md' --qdrant-url http://qdrant:6333 --qdrant-collection it_support_kb &&
+        echo 'Knowledge base built successfully!' &&
+        tail -f /dev/null
+      "
+
+  backend:
+    build: ./backend
+    ports:
+      - "8001:8000"
+    depends_on:
+      - qdrant
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - QDRANT_URL=http://qdrant:6333
+      - QDRANT_PORT=6333
+      - QDRANT_COLLECTION=it_support_kb
+    volumes:
+      - backend_data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8502:8501"
+    depends_on:
+      - backend
+    environment:
+      - BACKEND_URL=http://backend:8000
+    volumes:
+      - ./frontend:/app
+
+volumes:
+  qdrant_data:
+  backend_data:
+
+networks:
+  default:
+    name: it_support_network
